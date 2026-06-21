@@ -1,0 +1,9 @@
+node_modules/
+data/records.json
+data/uploads/
+current-url.txt
+launchd.log
+launchd-error.log
+tunnel.log
+*.swp
+.DS_Store

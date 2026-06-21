@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>吾之所爱 · 记录成长与温暖</title>
+<style>
+/* ========== Reset & Base ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root {
+  --cream: #fefaf5;
+  --warm-white: #fdf8f2;
+  --card-bg: #ffffff;
+  --text: #3d3226;
+  --text-light: #6b5e50;
+  --text-muted: #9b8b7a;
+  --coral: #d4846a;
+  --coral-light: #f5e1da;
+  --coral-bg: #fdf5f1;
+  --terracotta: #c17a4c;
+  --terracotta-light: #fdf2e9;
+  --sage: #7a9e8f;
+  --sage-light: #eaf2ee;
+  --sage-bg: #f5faf7;
+  --gold: #d4a853;
+  --gold-light: #fdf7e8;
+  --rose: #e8b4b8;
+  --rose-light: #fdf2f3;
+  --border: #ede4d8;
+  --border-light: #f5efe6;
+  --shadow-sm: 0 1px 3px rgba(61,50,38,0.06);
+  --shadow: 0 2px 12px rgba(61,50,38,0.07);
+  --shadow-lg: 0 8px 30px rgba(61,50,38,0.10);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font: "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Serif SC",sans-serif;
+  --font-serif: "Noto Serif SC","STSong","Songti SC",serif;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+html { font-size: 15px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: linear-gradient(180deg, #fefaf5 0%, #fdf5ef 30%, #fefaf5 100%);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+/* ========== App Shell ========== */
+.app-container { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+.page { display: none; }
+.page.active { display: block; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========== Top Nav ========== */
+.top-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 0 14px; border-bottom: 1px solid var(--border-light);
+  margin-bottom: 16px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; text-decoration: none;
+}
+.nav-brand .brand-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, #e8c4a2, #d4846a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; color: #fff; box-shadow: 0 2px 8px rgba(212,132,106,0.25);
+}
+.nav-brand .brand-text { font-size: 1.05rem; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+.nav-brand .brand-sub { font-size: 0.7rem; color: var(--text-muted); }
+.nav-back {
+  display: inline-flex; align-items: center; gap: 5px;
+  color: var(--terracotta); font-size: 0.88rem; cursor: pointer;
+  border: none; background: none; font-family: var(--font); font-weight: 500;
+  padding: 6px 12px; border-radius: 20px; transition: var(--transition);
+}
+.nav-back:hover { background: var(--terracotta-light); }
+
+/* ========== Homepage ========== */
+.home-hero { text-align: center; padding: 30px 16px 20px; }
+.home-hero .hero-icon { font-size: 3.5rem; margin-bottom: 12px; }
+.home-hero h1 {
+  font-family: var(--font-serif);
+  font-size: 1.8rem; font-weight: 700; color: var(--text);
+  margin-bottom: 6px; letter-spacing: 1px;
+}
+.home-hero .hero-sub {
+  font-size: 0.95rem; color: var(--text-light);
+  margin-bottom: 4px; line-height: 1.8;
+}
+.home-hero .hero-quote {
+  display: inline-block; margin-top: 8px; padding: 8px 18px;
+  background: var(--gold-light); border-radius: 20px;
+  font-size: 0.82rem; color: #8b6d3a; font-style: italic;
+  letter-spacing: 0.5px;
+}
+
+.home-cards {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+  margin: 10px 0 30px;
+}
+.home-card {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 28px 24px; cursor: pointer; transition: var(--transition);
+  border: 1px solid var(--border-light); box-shadow: var(--shadow);
+  position: relative; overflow: hidden; text-align: center;
+  text-decoration: none; color: inherit; display: block;
+}
+.home-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+.home-card.conflict-card:hover { border-color: #ddb892; }
+.home-card.warm-card:hover { border-color: #e8b4b8; }
+.home-card.album-card:hover { border-color: #a3c4b3; }
+
+.home-card .card-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; margin: 0 auto 16px;
+  transition: var(--transition);
+}
+.home-card.conflict-card .card-icon { background: var(--terracotta-light); }
+.home-card.warm-card .card-icon { background: var(--rose-light); }
+.home-card.album-card .card-icon { background: var(--sage-light); }
+.home-card:hover .card-icon { transform: scale(1.08); }
+
+.home-card .card-badge {
+  display: inline-block; padding: 3px 12px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.home-card.conflict-card .card-badge { background: var(--terracotta-light); color: var(--terracotta); }
+.home-card.warm-card .card-badge { background: var(--rose-light); color: var(--coral); }
+.home-card.album-card .card-badge { background: var(--sage-light); color: #5a8a72; }
+
+.home-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.home-card p { font-size: 0.85rem; color: var(--text-light); line-height: 1.7; margin-bottom: 8px; }
+.home-card .card-count { font-size: 0.78rem; color: var(--text-muted); }
+.home-card .card-count strong { font-size: 1.3rem; font-weight: 700; }
+
+/* decorative accent line */
+.home-card::after {
+  content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 3px;
+  border-radius: 3px 3px 0 0; transition: var(--transition);
+}
+.home-card.conflict-card::after { background: var(--terracotta); opacity: 0.4; }
+.home-card.warm-card::after { background: var(--coral); opacity: 0.4; }
+.home-card.album-card::after { background: var(--sage); opacity: 0.4; }
+.home-card:hover::after { left: 10%; right: 10%; opacity: 0.7; }
+
+.home-footer { text-align: center; padding: 10px 0 30px; }
+.home-footer .footer-stats {
+  display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;
+}
+.home-footer .stat-item { text-align: center; }
+.home-footer .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--terracotta); }
+.home-footer .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+/* ========== Record List ========== */
+.list-header { margin-bottom: 20px; }
+.list-header .list-type-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 600;
+  margin-bottom: 10px;
+}
+.list-type-badge.conflict { background: var(--terracotta-light); color: var(--terracotta); }
+.list-type-badge.warm { background: var(--rose-light); color: var(--coral); }
+
+.list-header h2 { font-size: 1.35rem; font-weight: 700; }
+.list-header p { font-size: 0.85rem; color: var(--text-light); margin-top: 4px; }
+
+.list-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+  align-items: center;
+}
+.list-toolbar input, .list-toolbar select {
+  padding: 8px 14px; border: 1px solid var(--border); border-radius: 20px;
+  font-size: 0.85rem; font-family: var(--font); background: var(--card-bg);
+  color: var(--text); transition: var(--transition);
+}
+.list-toolbar input:focus, .list-toolbar select:focus {
+  outline: none; border-color: var(--terracotta-light);
+  box-shadow: 0 0 0 3px rgba(193,122,76,0.08);
+}
+.list-toolbar input { width: 180px; }
+.list-toolbar select { min-width: 100px; }
+.list-toolbar .filter-count { font-size: 0.8rem; color: var(--text-muted); margin-left: auto; }
+.btn-reset {
+  padding: 8px 14px; border: 1px solid var(--border); border-radius: 20px;
+  background: var(--card-bg); color: var(--text-light); font-size: 0.82rem;
+  cursor: pointer; font-family: var(--font); transition: var(--transition);
+}
+.btn-reset:hover { background: var(--border-light); }
+
+/* record card */
+.record-grid { display: flex; flex-direction: column; gap: 12px; }
+.record-card {
+  background: var(--card-bg); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 18px 22px;
+  cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-sm);
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.record-card:hover { border-color: #ddb892; box-shadow: var(--shadow); transform: translateY(-1px); }
+.record-card .card-thumb {
+  width: 56px; height: 56px; border-radius: var(--radius-sm);
+  flex-shrink: 0; object-fit: cover;
+  background: var(--border-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+}
+.record-card .card-body { flex: 1; min-width: 0; }
+.record-card .card-body .card-date { font-size: 0.78rem; color: var(--terracotta); font-weight: 600; margin-bottom: 2px; }
+.record-card .card-body .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+.record-card .card-body .card-excerpt { font-size: 0.82rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.record-card .card-body .card-meta { margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.record-card .card-body .card-meta .tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 0.7rem; background: var(--terracotta-light); color: var(--terracotta);
+}
+.record-card .card-body .card-meta .tag.warm-tag { background: var(--rose-light); color: var(--coral); }
+
+.empty-state {
+  text-align: center; padding: 50px 20px; color: var(--text-muted);
+  background: var(--card-bg); border-radius: var(--radius);
+  border: 1px dashed var(--border); margin: 10px 0;
+}
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state h3 { font-size: 1rem; margin-bottom: 6px; color: var(--text-light); }
+
+/* ========== Buttons ========== */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 22px; font-size: 0.86rem;
+  font-family: var(--font); cursor: pointer; border: none;
+  font-weight: 500; transition: var(--transition); text-decoration: none;
+}
+.btn-primary { background: var(--terracotta); color: #fff; }
+.btn-primary:hover { background: #a86a3e; transform: translateY(-1px); }
+.btn-warm { background: var(--coral); color: #fff; }
+.btn-warm:hover { background: #c0735a; transform: translateY(-1px); }
+.btn-outline { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { background: var(--border-light); }
+.btn-sm { padding: 5px 14px; font-size: 0.8rem; }
+.btn-danger { background: #c95b5b; color: #fff; }
+.btn-danger:hover { background: #b34848; }
+.btn-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+/* ========== Detail View ========== */
+.detail-header { margin-bottom: 24px; }
+.detail-header h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+.detail-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text-muted); align-items: center; }
+
+.detail-section {
+  background: var(--card-bg); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.detail-section h4 {
+  font-size: 1rem; font-weight: 700; color: var(--terracotta);
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border-light);
+  display: flex; align-items: center; gap: 8px;
+}
+.section-num { display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%; background: var(--terracotta-light);
+  color: var(--terracotta); font-size: 0.75rem; font-weight: 700; }
+
+.sub-item { margin-bottom: 14px; padding-left: 14px; border-left: 3px solid var(--border-light); }
+.sub-item:last-child { margin-bottom: 0; }
+.sub-item h5 { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.sub-item p { font-size: 0.85rem; color: var(--text-light); line-height: 1.8; white-space: pre-wrap; }
+
+.timeline-stage { display: flex; gap: 14px; margin-bottom: 16px; }
+.timeline-stage:last-child { margin-bottom: 0; }
+.timeline-dot { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--terracotta-light); color: var(--terracotta);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.8rem; }
+.timeline-content { flex: 1; }
+.timeline-content h5 { font-size: 0.92rem; font-weight: 600; margin-bottom: 3px; }
+.timeline-content p { font-size: 0.83rem; color: var(--text-light); white-space: pre-wrap; line-height: 1.8; }
+
+.optimal-step { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+.optimal-step:last-child { margin-bottom: 0; }
+.step-badge { flex-shrink: 0; background: var(--sage); color: #fff;
+  padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.summary-point { padding: 10px 14px; margin-bottom: 6px; background: #fefaf5;
+  border-radius: var(--radius-xs); font-size: 0.85rem; color: var(--text); line-height: 1.8; }
+.summary-point:last-child { margin-bottom: 0; }
+.summary-point strong { color: var(--terracotta); }
+
+/* photo gallery in detail */
+.photo-gallery { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.photo-gallery img {
+  width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light); cursor: pointer; transition: var(--transition);
+}
+.photo-gallery img:hover { transform: scale(1.04); box-shadow: var(--shadow); }
+
+/* lightbox */
+.lightbox { position: fixed; inset: 0; background: rgba(61,50,38,0.85);
+  display: flex; align-items: center; justify-content: center; z-index: 999;
+  cursor: pointer; }
+.lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
+
+/* ========== Album Views ========== */
+.person-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.person-card {
+  background: var(--card-bg); border-radius: var(--radius); padding: 24px 20px;
+  text-align: center; cursor: pointer; transition: var(--transition);
+  border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);
+  text-decoration: none; color: inherit; display: block;
+}
+.person-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #a3c4b3; }
+.person-card .person-avatar {
+  width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem;
+}
+.person-card .person-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; }
+.person-card .person-count { font-size: 0.78rem; color: var(--text-muted); }
+
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.photo-card {
+  background: var(--card-bg); border-radius: var(--radius-sm); overflow: hidden;
+  border: 1px solid var(--border-light); cursor: pointer; transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.photo-card:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.photo-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+.photo-card .photo-caption { padding: 8px 10px; font-size: 0.78rem; color: var(--text-light); text-align: center; }
+.photo-card .photo-date { font-size: 0.72rem; color: var(--text-muted); text-align: center; padding-bottom: 8px; }
+
+.album-header { margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+.album-header .album-avatar {
+  width: 56px; height: 56px; border-radius: 50%; background: var(--sage-light);
+  display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+}
+
+/* ========== Form View ========== */
+.form-section {
+  background: var(--card-bg); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 22px 26px; margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.form-section h4 {
+  font-size: 1rem; font-weight: 700; color: var(--terracotta);
+  margin-bottom: 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border-light);
+}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.form-group label .optional { color: var(--text-muted); font-weight: 400; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 0.86rem; font-family: var(--font);
+  background: var(--card-bg); color: var(--text); transition: var(--transition);
+  resize: vertical;
+}
+.form-group textarea { min-height: 70px; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  outline: none; border-color: var(--terracotta-light);
+  box-shadow: 0 0 0 3px rgba(193,122,76,0.08);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
+
+.form-array-item {
+  position: relative; background: #fefaf5; border-radius: var(--radius-sm);
+  padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--border-light);
+}
+.form-array-item .btn-remove {
+  position: absolute; top: 6px; right: 8px; background: none;
+  border: none; color: var(--coral); cursor: pointer; font-size: 1.1rem;
+  padding: 2px 6px; transition: var(--transition);
+}
+.form-array-item .btn-remove:hover { color: #c95b5b; }
+
+.btn-add-item {
+  background: none; border: 1px dashed var(--terracotta-light);
+  color: var(--terracotta); cursor: pointer; padding: 8px 16px;
+  border-radius: 20px; font-size: 0.83rem; font-family: var(--font);
+  width: 100%; transition: var(--transition);
+}
+.btn-add-item:hover { background: var(--terracotta-light); }
+
+/* photo upload */
+.photo-upload-area {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start;
+}
+.photo-preview {
+  width: 90px; height: 90px; border-radius: var(--radius-sm);
+  object-fit: cover; border: 1px solid var(--border-light);
+}
+.photo-add-btn {
+  width: 90px; height: 90px; border-radius: var(--radius-sm);
+  border: 2px dashed var(--border); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 1.6rem; color: var(--text-muted);
+  cursor: pointer; transition: var(--transition);
+  background: none; font-family: var(--font);
+}
+.photo-add-btn:hover { border-color: var(--terracotta-light); color: var(--terracotta); background: var(--terracotta-light); }
+.photo-item { position: relative; display: inline-block; }
+.photo-item .photo-remove {
+  position: absolute; top: -6px; right: -6px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #c95b5b; color: #fff; border: none;
+  font-size: 0.75rem; cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+}
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed; top: 20px; right: 20px; padding: 12px 20px;
+  border-radius: var(--radius-sm); color: #fff; font-size: 0.86rem;
+  font-weight: 500; z-index: 1000; animation: slideIn 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+.toast.success { background: var(--sage); }
+.toast.error { background: #c95b5b; }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ========== Modal ========== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(61,50,38,0.4);
+  display: flex; align-items: center; justify-content: center; z-index: 999;
+}
+.modal-box {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 26px 30px; max-width: 380px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  text-align: center;
+}
+.modal-box p { margin-bottom: 16px; font-size: 0.92rem; }
+
+/* ========== Responsive ========== */
+@media (max-width: 640px) {
+  .home-cards { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .list-toolbar { flex-direction: column; }
+  .list-toolbar input { width: 100%; }
+  .top-nav { padding: 12px 0 10px; }
+  .home-hero { padding: 20px 10px 14px; }
+  .home-hero h1 { font-size: 1.4rem; }
+  .record-card { flex-direction: column; }
+  .photo-gallery img { width: 90px; height: 90px; }
+  .person-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .person-card { padding: 16px 12px; }
+  .person-card .person-avatar { width: 52px; height: 52px; font-size: 1.6rem; }
+  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .photo-card img { height: 120px; }
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+  <!-- ====== Top Nav ====== -->
+  <nav class="top-nav" id="top-nav">
+    <a class="nav-brand" onclick="goHome()">
+      <div class="brand-icon">🏠</div>
+      <div><div class="brand-text">吾之所爱</div><div class="brand-sub" id="brand-sub"></div></div>
+    </a>
+    <button class="nav-back" id="btn-back" style="display:none;" onclick="goBack()">← 返回</button>
+  </nav>
+
+  <!-- ====== PAGE: Home ====== -->
+  <div class="page active" id="page-home">
+    <div class="home-hero">
+      <div class="hero-icon">🕯️</div>
+      <h1>欢迎回到吾之所爱</h1>
+      <p class="hero-sub">每一次摩擦，都是成长的契机<br>每一份温暖，都值得被珍藏</p>
+      <div class="hero-quote">「记录，是给未来的自己最好的礼物」</div>
+    </div>
+    <div class="home-cards">
+      <a class="home-card conflict-card" onclick="openList('conflict')">
+        <div class="card-icon">🧭</div>
+        <div class="card-badge">成长时刻</div>
+        <h2>家庭成长时刻</h2>
+        <p>看清脉络 · 分清课题<br>在每一次摩擦中长出智慧</p>
+        <div class="card-count">已记录 <strong id="count-conflict">0</strong> 次复盘</div>
+      </a>
+      <a class="home-card warm-card" onclick="openList('warm')">
+        <div class="card-icon">💝</div>
+        <div class="card-badge">温暖珍藏</div>
+        <h2>家庭温馨记录</h2>
+        <p>孩子书信 · 暖心礼物<br>收集每一个被爱着的瞬间</p>
+        <div class="card-count">已珍藏 <strong id="count-warm">0</strong> 个瞬间</div>
+      </a>
+      <a class="home-card album-card" onclick="openAlbumPeople()">
+        <div class="card-icon">📷</div>
+        <div class="card-badge">时光相册</div>
+        <h2>家庭相册</h2>
+        <p>爸爸 · 妈妈 · 哥哥 · 弟弟<br>每个人的成长足迹</p>
+        <div class="card-count">已收藏 <strong id="count-album">0</strong> 张照片</div>
+      </a>
+    </div>
+    <div class="home-footer">
+      <div class="footer-stats">
+        <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div class="stat-label">总记录</div></div>
+        <div class="stat-item"><div class="stat-num" id="stat-days">0</div><div class="stat-label">天陪伴</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== PAGE: Record List ====== -->
+  <div class="page" id="page-list">
+    <div class="list-header">
+      <span class="list-type-badge" id="list-type-badge"></span>
+      <h2 id="list-title"></h2>
+      <p id="list-desc"></p>
+    </div>
+    <div class="list-toolbar">
+      <input type="text" id="filter-search" placeholder="🔍 搜索关键词…" oninput="renderList()">
+      <select id="filter-type" onchange="renderList()"><option value="">全部类型</option></select>
+      <button class="btn-reset" onclick="resetFilters()">重置</button>
+      <span class="filter-count" id="filter-count"></span>
+    </div>
+    <div class="record-grid" id="record-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <div class="empty-icon" id="empty-icon"></div>
+      <h3 id="empty-title"></h3>
+      <p style="font-size:0.83rem;color:var(--text-muted);" id="empty-desc"></p>
+      <button class="btn btn-primary" style="margin-top:14px;" id="empty-btn" onclick="openNew()">+ 新增记录</button>
+    </div>
+  </div>
+
+  <!-- ====== PAGE: Record Detail ====== -->
+  <div class="page" id="page-detail"></div>
+
+  <!-- ====== PAGE: New Record Form ====== -->
+  <div class="page" id="page-new">
+    <div class="list-header"><h2 id="new-title"></h2><p id="new-desc"></p></div>
+    <form id="record-form" onsubmit="saveRecord(event)">
+      <!-- dynamic form content -->
+    </form>
+  </div>
+
+  <!-- ====== PAGE: Album People ====== -->
+  <div class="page" id="page-album-people">
+    <div class="list-header">
+      <span class="list-type-badge" style="background:var(--sage-light);color:#5a8a72;">📷 时光相册</span>
+      <h2>家庭相册</h2>
+      <p>选择一个人，查看他的成长足迹</p>
+    </div>
+    <div class="person-grid" id="person-grid"></div>
+  </div>
+
+  <!-- ====== PAGE: Album Person Photos ====== -->
+  <div class="page" id="page-album-person">
+    <div class="album-header">
+      <div class="album-avatar" id="album-avatar-icon"></div>
+      <div>
+        <h2 id="album-person-name" style="font-size:1.3rem;font-weight:700;"></h2>
+        <p style="font-size:0.85rem;color:var(--text-muted);"><span id="album-photo-count"></span> 张照片</p>
+      </div>
+    </div>
+    <div class="photo-grid" id="photo-grid"></div>
+    <div class="empty-state" id="album-empty-state" style="display:none;">
+      <div class="empty-icon">📷</div>
+      <h3>这个相册还是空的</h3>
+      <p style="font-size:0.83rem;color:var(--text-muted);">点击下方按钮添加第一张照片吧</p>
+      <button class="btn btn-primary" style="margin-top:14px;" onclick="openAlbumNew()">+ 添加照片</button>
+    </div>
+    <div class="btn-group" style="margin-top:20px;">
+      <button class="btn btn-primary" onclick="openAlbumNew()">📷 添加照片</button>
+      <button class="btn btn-outline" onclick="openAlbumPeople()">← 返回相册列表</button>
+    </div>
+  </div>
+
+  <!-- ====== PAGE: Album New Photo ====== -->
+  <div class="page" id="page-album-new">
+    <div class="list-header"><h2>📷 添加照片</h2><p id="album-new-person-label"></p></div>
+    <div class="form-section">
+      <div class="form-group">
+        <label>📷 选择照片 <span class="optional">（可多选）</span></label>
+        <div class="photo-upload-area" id="album-photo-area">
+          <button type="button" class="photo-add-btn" onclick="document.getElementById('album-photo-input').click()">+</button>
+          <input type="file" id="album-photo-input" accept="image/*" multiple style="display:none;" onchange="handleAlbumPhotoSelect(event)">
+        </div>
+        <div class="form-hint">点击 + 选择照片，支持手机拍照或从相册选取</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>拍照日期 <span class="optional">（可选）</span></label><input type="text" id="af-photo-date" placeholder="如：2024年春天"></div>
+        <div class="form-group"><label>标签 <span class="optional">（逗号分隔）</span></label><input type="text" id="af-tags" placeholder="如：户外、笑容"></div>
+      </div>
+      <div class="form-group"><label>照片描述 <span class="optional">（可选，会作为照片的标题）</span></label><textarea id="af-caption" rows="2" placeholder="一句话描述这张照片…"></textarea></div>
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary" onclick="saveAlbumPhotos()">💾 保存照片</button>
+        <button type="button" class="btn btn-outline" onclick="openAlbumPerson(currentAlbumPerson)">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-container"></div>
+
+<script>
+// ========== State ==========
+const STORAGE_KEY = 'family_records_v2';
+const isServerMode = ['http:','https:'].includes(window.location.protocol);
+let records = [];
+let currentType = 'conflict'; // 'conflict' | 'warm'
+let currentView = 'home'; // 'home' | 'list' | 'detail' | 'new'
+let currentDetailId = null;
+let photoFiles = []; // temp storage for new record photos (base64)
+let uploadedPhotos = []; // URLs of uploaded photos (server mode)
+
+// ========== API ==========
+async function apiGetRecords(type) {
+  try {
+    const url = '/api/records' + (type ? '?type=' + type : '');
+    const resp = await fetch(url);
+    if (resp.ok) return await resp.json();
+  } catch(e) { /* fallback */ }
+  return null;
+}
+async function apiSaveRecord(record) {
+  try {
+    const resp = await fetch('/api/records', {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(record)
+    });
+    if (resp.ok) return await resp.json();
+  } catch(e) {}
+  return null;
+}
+async function apiDeleteRecord(id) {
+  try {
+    const resp = await fetch('/api/records/'+id, { method:'DELETE' });
+    return resp.ok;
+  } catch(e) { return false; }
+}
+async function apiUploadImage(fileData, fileName) {
+  try {
+    const resp = await fetch('/api/upload', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ data: fileData, name: fileName })
+    });
+    if (resp.ok) { const j = await resp.json(); return j.url; }
+  } catch(e) {}
+  return null;
+}
+
+// ========== Data ==========
+async function loadRecords() {
+  if (isServerMode) {
+    const data = await apiGetRecords();
+    if (data) { records = data; return; }
+  }
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    records = raw ? JSON.parse(raw) : [];
+  } catch(e) { records = []; }
+}
+
+function getRecordsByType(type) {
+  return records.filter(r => r.recordType === type).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+function saveLocally() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+// add first seed data if empty
+function seedIfEmpty() {
+  if (records.length > 0) return;
+  const conflictRecord = {
+    id: 'rec_seed_001', createdAt: new Date().toISOString(), recordType: 'conflict',
+    eventDate: '晚间居家时段', reviewer: '心理学学习型母亲',
+    peopleInvolved: [{name:'母亲',role:'复盘者'},{name:'父亲',role:'丈夫'},{name:'儿子',role:'学龄孩子'}],
+    cause: '亲子事前约定：孩子平板使用时长1.5小时；孩子超时使用，共计使用2小时，未主动退出、交还平板。',
+    corePrinciples: '不自我审判、不追责伴侣、不定义孩子品行；区分原生情绪/次生情绪、区分自我课题/伴侣课题/孩子课题、区分规则问题/情绪宣泄问题。',
+    conflictType: '家庭复合冲突', tags: ['平板超时','压力转嫁','情绪过载','课题分离'],
+    mood: '愤怒→失控→内疚→清醒',
+    timeline: [
+      {stage:1,title:'事件触发期（孩子违约）',objectiveBehavior:'孩子自愿约定1.5小时平板时间，超时30分钟，沉浸玩乐，无视时间约定，不主动交出设备。',innerThoughts:'孩子内心：玩乐快感大于规则意识，抱有侥幸心理，觉得不会被严厉制止，没有恶意"骗人"，只是自控力不足。'},
+      {stage:2,title:'情绪转嫁期（父亲爆发）',objectiveBehavior:'父亲看到孩子违约，第一时间暴怒，定性孩子"不讲信用、人品有问题"，持续负面评判孩子，同时转头向妻子抱怨、发泄负面情绪。',innerThoughts:'父亲深层心理（非针对孩子、非针对你）：\n1. 职场长期积压高压、疲惫、失控感；\n2. 把【不守规则=失控】绑定，触发父亲内心最深的焦虑；\n3. 把自我压力合理化：借管教孩子宣泄自身职场内耗；\n4. 潜意识依赖妻子：默认妻子承接自己的负面情绪。'},
+      {stage:3,title:'母亲夹心承压期',objectiveBehavior:'你被迫站在中间，既要共情丈夫的辛苦，又要守护孩子不被贴负面标签，还要维系家庭秩序。',innerThoughts:'表层认知：看懂父亲是转嫁压力，孩子只是自控力差。\n底层感受：共情容器被装满，已没余力包容任何人。理智想温柔包容，身体本能极度愤怒、濒临崩溃。'},
+      {stage:4,title:'母亲失控行动期',objectiveBehavior:'情绪爆炸，走到孩子门口用力敲门、高声催促，最终孩子被迫交出平板。',innerThoughts:'行为本质：不是管教孩子，是借助管教孩子，终止丈夫带给你的情绪内耗。你发火的对象本质不是孩子，是失控的丈夫。'},
+      {stage:5,title:'事后复盘期',objectiveBehavior:'家庭安静，情绪平复，但陷入深度自我攻击。',innerThoughts:'我学心理学，我居然失控伤害孩子，我不够稳定，我做错了。'}
+    ],
+    topicSeparation: [
+      {party:'孩子的课题',facts:'孩子有错，属于行为问题（自控力不足），而非人格问题。',correctHandling:'事后复盘规则、制定违约后果即可。',responsibility:'孩子承担违约后果，无需全家人爆发情绪买单。'},
+      {party:'丈夫的课题',facts:'丈夫把职场创伤投射在孩子小事上；用人格否定式管教，转嫁压力。',correctHandling:'这完全是丈夫的个人课题。共情是自愿给予，不是被迫承接。',responsibility:'你有权不承接他的负面情绪。'},
+      {party:'你的课题',facts:'你不是控制不住情绪，是三重压力阈值耗尽；你对孩子发火是家庭系统连锁反应。',correctHandling:'心理学学习是让人拥有修复能力，不是让人永不发火。',responsibility:'事后自我疗愈，善待疲惫的自己。'}
+    ],
+    errorPoints: [
+      {party:'孩子',errors:'契约意识薄弱，平板超时，无视约定，自控力欠缺。'},
+      {party:'丈夫（家庭矛盾源头）',errors:'1. 把行为问题上升人格批判；\n2. 边界不清，工作压力带入家庭；\n3. 育儿甩锅，把压力全部丢给你。'},
+      {party:'你的行为瑕疵（仅瑕疵非过错）',errors:'1. 次生情绪迁怒：把对丈夫的不满转移给孩子；\n2. 没有及时划清边界，任由内耗发酵。'}
+    ],
+    lingeringEffects: [
+      {title:'系统内耗残留',description:'家里高强度愤怒氛围，交感神经持续紧绷，无法入睡。'},
+      {title:'专业身份自我审判',description:'心理学学习者自带高标准，放大自己的失误。'},
+      {title:'无力感残留',description:'没办法改变丈夫的情绪模式，没办法同时护住所有人。'}
+    ],
+    recoveryPlan: [
+      {target:'对孩子：亲子修复（10分钟）',actions:'分开行为对错+情绪道歉',script:'宝贝，昨天我们约定平板1.5小时，你超时没有交还，这是没有遵守约定。但妈妈受爸爸情绪影响，大声对你发脾气，让你害怕了，对不起。之后好好遵守时间，有问题好好沟通。'},
+      {target:'对自己：解除自我苛责',actions:'自我默念疗愈句',script:'我只是情绪容器装满了，我是普通人，我可以失控；丈夫的压力、育儿的焦虑，不是我的责任；我事后懂得反思、修复，就是合格的心理养育者。'},
+      {target:'对丈夫：边界沟通',actions:'非指责式沟通（白天平和时）',script:'我知道你上班压力大，看到孩子不守规则会着急。但下次先不要评价孩子人品，也不要情绪丢给我。你先独处平复，我们统一温和立规矩。你外放的情绪会让我崩盘，最后伤到孩子。'}
+    ],
+    optimalFlow: [
+      {step:1,title:'给丈夫划边界（阻断情绪）',action:'我知道你生气，我们冷静处理，你先管好情绪，不要评价孩子人品。'},
+      {step:2,title:'单独温和找孩子',action:'约定超时了，现在交还平板，明天缩减游玩时长作为违约代价。'},
+      {step:3,title:'不承接丈夫抱怨',action:'你累可以休息，不用跟我倾诉负面情绪，育儿只谈规则不谈情绪。'}
+    ],
+    finalSummary: [
+      {point:1,content:'本次冲突导火索是孩子超时，真正引爆点是丈夫的压力转嫁。'},
+      {point:2,content:'你的失控是夹心人的本能自保，不是修行不够。'},
+      {point:3,content:'心理学带给你的不是永远温和，是事后看清脉络、及时修复、下次优化。'},
+      {point:4,content:'不用救赎所有人：不用救赎丈夫的情绪、不用改造孩子的自控力、只需要善待疲惫的自己。'}
+    ]
+  };
+  const warmRecord = {
+    id: 'rec_seed_002', createdAt: new Date().toISOString(), recordType: 'warm',
+    eventDate: '2024年母亲节', title: '儿子送的母亲节贺卡',
+    warmType: '节日书信', peopleInvolved: [{name:'儿子',role:'孩子'},{name:'母亲',role:'收信人'}],
+    content: '母亲节那天，儿子悄悄在我枕头下放了一张自己画的贺卡。上面用歪歪扭扭的字写着："妈妈我爱你，你是世界上最好的妈妈。"旁边画了一朵小花和一个笑脸。那一刻，所有的疲惫都值得了。',
+    photos: [],
+    tags: ['母亲节','贺卡','感动','孩子的爱'],
+    mood: '感动、温暖、幸福'
+  };
+  records.push(conflictRecord, warmRecord);
+  saveLocally();
+}
+
+// ========== Navigation ==========
+function goHome() {
+  currentView = 'home'; currentType = 'conflict'; currentDetailId = null;
+  showPage('page-home');
+  document.getElementById('btn-back').style.display = 'none';
+  updateHomeStats();
+}
+
+function goBack() {
+  if (currentView === 'detail') { openList(currentType); }
+  else if (currentView === 'new') { openList(currentType); }
+  else if (currentView === 'list') { goHome(); }
+  else if (currentView === 'album-person') { openAlbumPeople(); }
+  else if (currentView === 'album-new') { openAlbumPerson(currentAlbumPerson); }
+  else if (currentView === 'album-people') { goHome(); }
+}
+
+function openList(type) {
+  currentType = type; currentView = 'list'; currentDetailId = null;
+  showPage('page-list');
+  document.getElementById('btn-back').style.display = 'inline-flex';
+
+  const isConflict = type === 'conflict';
+  document.getElementById('list-type-badge').className = 'list-type-badge ' + (isConflict ? 'conflict' : 'warm');
+  document.getElementById('list-type-badge').textContent = isConflict ? '🧭 成长时刻' : '💝 温暖珍藏';
+  document.getElementById('list-title').textContent = isConflict ? '家庭成长时刻' : '家庭温馨时刻';
+  document.getElementById('list-desc').textContent = isConflict
+    ? '每一次复盘，都是对家庭关系的一次温柔梳理'
+    : '珍藏每一个被爱着的瞬间，让温暖有迹可循';
+  document.getElementById('empty-icon').textContent = isConflict ? '📝' : '💌';
+  document.getElementById('empty-title').textContent = isConflict ? '还没有成长记录' : '还没有温馨记录';
+  document.getElementById('empty-desc').textContent = isConflict
+    ? '点击下方按钮，开始第一次复盘吧'
+    : '记录下孩子送的礼物、写的书信，让温暖永存';
+  document.getElementById('empty-btn').textContent = isConflict ? '✍️ 新增成长记录' : '💝 新增温馨记录';
+
+  // update filter dropdown
+  const filterType = document.getElementById('filter-type');
+  if (isConflict) {
+    filterType.innerHTML = '<option value="">全部类型</option><option value="亲子冲突">亲子摩擦</option><option value="夫妻冲突">夫妻摩擦</option><option value="家庭复合冲突">家庭多方摩擦</option><option value="其他">其他</option>';
+  } else {
+    filterType.innerHTML = '<option value="">全部类型</option><option value="节日书信">节日书信</option><option value="礼物">礼物</option><option value="温馨日常">温馨日常</option><option value="成长瞬间">成长瞬间</option><option value="其他">其他</option>';
+  }
+  renderList();
+}
+
+function openDetail(id) {
+  currentDetailId = id; currentView = 'detail';
+  const record = records.find(r => r.id === id);
+  if (!record) { openList(currentType); return; }
+  document.getElementById('btn-back').style.display = 'inline-flex';
+  showPage('page-detail');
+  renderDetail(record);
+}
+
+function openNew() {
+  currentView = 'new'; currentDetailId = null;
+  photoFiles = []; uploadedPhotos = [];
+  document.getElementById('btn-back').style.display = 'inline-flex';
+  const isConflict = currentType === 'conflict';
+  document.getElementById('new-title').textContent = isConflict ? '✍️ 新增家庭成长记录' : '💝 新增家庭温馨记录';
+  document.getElementById('new-desc').textContent = isConflict
+    ? '按模板完整记录，帮助自己看清脉络、分清课题'
+    : '记录下让你心头一暖的瞬间，附上照片更好哦';
+  showPage('page-new');
+  renderForm();
+}
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ========== Home Stats ==========
+function updateHomeStats() {
+  const conflicts = getRecordsByType('conflict');
+  const warms = getRecordsByType('warm');
+  const albums = getRecordsByType('album');
+  document.getElementById('count-conflict').textContent = conflicts.length;
+  document.getElementById('count-warm').textContent = warms.length;
+  document.getElementById('count-album').textContent = albums.length;
+  document.getElementById('stat-total').textContent = records.length;
+  // days since first record
+  if (records.length > 0) {
+    const earliest = records.reduce((min, r) => r.createdAt < min ? r.createdAt : min, records[0].createdAt);
+    const days = Math.max(1, Math.floor((Date.now() - new Date(earliest)) / 86400000));
+    document.getElementById('stat-days').textContent = days;
+  }
+}
+
+// ========== List Rendering ==========
+function renderList() {
+  const search = (document.getElementById('filter-search').value || '').toLowerCase();
+  const typeFilter = document.getElementById('filter-type').value;
+  let list = getRecordsByType(currentType);
+  if (search) list = list.filter(r => JSON.stringify(r).toLowerCase().includes(search));
+  if (typeFilter) {
+    if (currentType === 'conflict') list = list.filter(r => r.conflictType === typeFilter);
+    else list = list.filter(r => r.warmType === typeFilter);
+  }
+  document.getElementById('filter-count').textContent = `显示 ${list.length} 条`;
+
+  const grid = document.getElementById('record-grid');
+  const empty = document.getElementById('empty-state');
+  if (list.length === 0) {
+    grid.innerHTML = ''; empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = list.map(r => {
+      const isConflict = r.recordType === 'conflict';
+      const dateStr = r.eventDate || formatDate(r.createdAt);
+      const title = isConflict ? (r.cause||'').substring(0,50) : (r.title||'未命名');
+      const excerpt = isConflict
+        ? ((r.finalSummary||[])[0]?.content || r.cause || '')
+        : (r.content||'').substring(0,80);
+      const thumbEmoji = isConflict ? '🧭' : (r.photos&&r.photos.length>0 ? `<img src="${r.photos[0]}" class="card-thumb" style="object-fit:cover;">` : '💝');
+      const tags = (r.tags||[]).slice(0,4);
+      const people = (r.peopleInvolved||[]).map(p=>p.name).join('、');
+      return `
+        <div class="record-card" onclick="openDetail('${r.id}')">
+          <div class="card-thumb">${thumbEmoji}</div>
+          <div class="card-body">
+            <div class="card-date">📅 ${dateStr}</div>
+            <div class="card-title">${escHtml(title)}${title.length>=50?'…':''}</div>
+            <div class="card-excerpt">${escHtml(excerpt)}</div>
+            <div class="card-meta">
+              ${tags.map(t => `<span class="tag${isConflict?'':' warm-tag'}">#${escHtml(t)}</span>`).join('')}
+              <span style="font-size:0.75rem;color:var(--text-muted);">👥 ${people}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+}
+
+function resetFilters() {
+  document.getElementById('filter-search').value = '';
+  document.getElementById('filter-type').value = '';
+  renderList();
+}
+
+// ========== Detail Rendering ==========
+function renderDetail(r) {
+  const isConflict = r.recordType === 'conflict';
+  const el = document.getElementById('page-detail');
+  const peopleStr = (r.peopleInvolved||[]).map(p=>`${p.name}（${p.role}）`).join('、');
+  const dateStr = r.eventDate || formatDate(r.createdAt);
+
+  let html = `
+    <div class="detail-header">
+      <span class="list-type-badge ${isConflict?'conflict':'warm'}">${isConflict?'🧭 成长时刻':'💝 温暖珍藏'}</span>
+      <h3>${isConflict ? escHtml(r.cause||'').substring(0,60) : escHtml(r.title||'未命名')}</h3>
+      <div class="detail-meta">
+        <span>📅 ${dateStr}</span> <span>👤 ${escHtml(r.reviewer||'')}</span>
+        <span>👥 ${peopleStr}</span>
+        ${r.mood ? `<span>💭 ${escHtml(r.mood)}</span>` : ''}
+      </div>
+      <div class="detail-meta" style="margin-top:6px;">
+        ${(r.tags||[]).map(t=>`<span class="tag${isConflict?'':' warm-tag'}">#${escHtml(t)}</span>`).join(' ')}
+      </div>
+    </div>`;
+
+  if (isConflict) {
+    // Conflict detail sections (1-8)
+    html += `
+      <div class="detail-section"><h4><span class="section-num">1</span> 案例基础信息</h4>
+        <div class="sub-item"><h5>复盘人</h5><p>${escHtml(r.reviewer)}</p></div>
+        <div class="sub-item"><h5>事件时间</h5><p>${escHtml(r.eventDate)}</p></div>
+        <div class="sub-item"><h5>涉及人员</h5><p>${peopleStr}</p></div>
+        <div class="sub-item"><h5>事件起因</h5><p>${escHtml(r.cause)}</p></div>
+        ${r.corePrinciples?`<div class="sub-item"><h5>复盘核心原则</h5><p>${escHtml(r.corePrinciples)}</p></div>`:''}
+      </div>`;
+    if (r.timeline&&r.timeline.length) html += `
+      <div class="detail-section"><h4><span class="section-num">2</span> 事件完整时间线</h4>
+        ${r.timeline.map(t=>`<div class="timeline-stage"><div class="timeline-dot">${t.stage}</div><div class="timeline-content"><h5>${escHtml(t.title)}</h5><p><strong>客观行为：</strong>${escHtml(t.objectiveBehavior)}</p>${t.innerThoughts?`<p style="margin-top:4px;"><strong>内心活动：</strong>${escHtml(t.innerThoughts)}</p>`:''}</div></div>`).join('')}
+      </div>`;
+    if (r.topicSeparation&&r.topicSeparation.length) html += `
+      <div class="detail-section"><h4><span class="section-num">3</span> 课题分离</h4>
+        ${r.topicSeparation.map(t=>`<div class="sub-item"><h5>${escHtml(t.party)}</h5><p><strong>事实：</strong>${escHtml(t.facts)}</p><p><strong>正确处理：</strong>${escHtml(t.correctHandling)}</p><p><strong>责任归属：</strong>${escHtml(t.responsibility)}</p></div>`).join('')}
+      </div>`;
+    if (r.errorPoints&&r.errorPoints.length) html += `
+      <div class="detail-section"><h4><span class="section-num">4</span> 三方核心错误点</h4>
+        ${r.errorPoints.map(e=>`<div class="sub-item"><h5>${escHtml(e.party)}</h5><p>${escHtml(e.errors)}</p></div>`).join('')}
+      </div>`;
+    if (r.lingeringEffects&&r.lingeringEffects.length) html += `
+      <div class="detail-section"><h4><span class="section-num">5</span> 当下遗留影响</h4>
+        ${r.lingeringEffects.map(e=>`<div class="sub-item"><h5>${escHtml(e.title)}</h5><p>${escHtml(e.description)}</p></div>`).join('')}
+      </div>`;
+    if (r.recoveryPlan&&r.recoveryPlan.length) html += `
+      <div class="detail-section"><h4><span class="section-num">6</span> 事后修复方案</h4>
+        ${r.recoveryPlan.map(rp=>`<div class="sub-item"><h5>${escHtml(rp.target)}</h5><p><strong>行动：</strong>${escHtml(rp.actions)}</p>${rp.script?`<p style="margin-top:4px;"><strong>参考话术：</strong>${escHtml(rp.script)}</p>`:''}</div>`).join('')}
+      </div>`;
+    if (r.optimalFlow&&r.optimalFlow.length) html += `
+      <div class="detail-section"><h4><span class="section-num">7</span> 下次最优应对流程</h4>
+        ${r.optimalFlow.map(s=>`<div class="optimal-step"><span class="step-badge">第${s.step}步</span><p><strong>${escHtml(s.title)}：</strong>${escHtml(s.action)}</p></div>`).join('')}
+      </div>`;
+    if (r.finalSummary&&r.finalSummary.length) html += `
+      <div class="detail-section"><h4><span class="section-num">8</span> 终极总结</h4>
+        ${r.finalSummary.map(s=>`<div class="summary-point"><strong>${s.point}.</strong> ${escHtml(s.content)}</div>`).join('')}
+      </div>`;
+  } else {
+    // Warm moment detail
+    html += `
+      <div class="detail-section"><h4>💝 温馨详情</h4>
+        <div class="sub-item"><h5>日期</h5><p>${dateStr}</p></div>
+        <div class="sub-item"><h5>类型</h5><p>${escHtml(r.warmType||'温馨日常')}</p></div>
+        <div class="sub-item"><h5>涉及人员</h5><p>${peopleStr}</p></div>
+        <div class="sub-item"><h5>内容</h5><p>${escHtml(r.content||'')}</p></div>
+        ${r.photos&&r.photos.length ? `
+        <div class="sub-item"><h5>📷 照片 (${r.photos.length}张)</h5>
+          <div class="photo-gallery">${r.photos.map(p=>`<img src="${p}" onclick="event.stopPropagation();showLightbox('${p}')" loading="lazy">`).join('')}</div>
+        </div>` : ''}
+      </div>`;
+  }
+
+  html += `
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="goBack()">← 返回列表</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('${r.id}')">🗑 删除</button>
+    </div>`;
+  el.innerHTML = html;
+}
+
+function showLightbox(src) {
+  const lb = document.createElement('div'); lb.className = 'lightbox';
+  lb.innerHTML = `<img src="${src}">`;
+  lb.onclick = () => lb.remove();
+  document.body.appendChild(lb);
+}
+
+// ========== Delete ==========
+function confirmDelete(id) {
+  const r = records.find(x=>x.id===id); if (!r) return;
+  const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
+  overlay.innerHTML = `<div class="modal-box">
+    <p>确定要删除这条${r.recordType==='conflict'?'成长记录':'温馨记录'}吗？</p>
+    <p style="font-size:0.82rem;color:var(--text-muted);">${escHtml((r.cause||r.title||'').substring(0,40))}…</p>
+    <div class="btn-group" style="justify-content:center;">
+      <button class="btn btn-danger btn-sm" id="btn-del-confirm">确认删除</button>
+      <button class="btn btn-outline btn-sm" id="btn-del-cancel">取消</button>
+    </div></div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#btn-del-cancel').onclick = () => overlay.remove();
+  overlay.querySelector('#btn-del-confirm').onclick = async () => {
+    if (isServerMode) await apiDeleteRecord(id);
+    records = records.filter(x=>x.id!==id);
+    saveLocally();
+    overlay.remove();
+    showToast('已删除', 'success');
+    openList(currentType);
+    updateHomeStats();
+  };
+  overlay.addEventListener('click', e => { if (e.target===overlay) overlay.remove(); });
+}
+
+// ========== Form ==========
+let conflictFormCounters = {timeline:0,topic:0,error:0,lingering:0,recovery:0,optimal:0,summary:0};
+
+function renderForm() {
+  const el = document.getElementById('record-form');
+  const isConflict = currentType === 'conflict';
+  // Reset counters
+  conflictFormCounters = {timeline:0,topic:0,error:0,lingering:0,recovery:0,optimal:0,summary:0};
+
+  let html = '';
+  if (isConflict) {
+    html += `
+      <div class="form-section"><h4>一、案例基础信息</h4>
+        <div class="form-row"><div class="form-group"><label>复盘人</label><input type="text" id="f-reviewer" placeholder="如：心理学学习型母亲" required></div>
+        <div class="form-group"><label>事件时间</label><input type="text" id="f-eventDate" placeholder="如：晚间居家时段" required></div></div>
+        <div class="form-group"><label>涉及人员 <span class="optional">（逗号分隔，格式：角色-称呼）</span></label><input type="text" id="f-people" placeholder="如：母亲（复盘者）、父亲、学龄儿子" required></div>
+        <div class="form-row"><div class="form-group"><label>摩擦类型</label><select id="f-conflictType" required><option value="">请选择</option><option value="亲子冲突">亲子摩擦</option><option value="夫妻冲突">夫妻摩擦</option><option value="家庭复合冲突">家庭多方摩擦</option><option value="其他">其他</option></select></div>
+        <div class="form-group"><label>情绪标签 <span class="optional">（逗号分隔）</span></label><input type="text" id="f-tags" placeholder="如：愤怒、无力、压力转嫁"></div></div>
+        <div class="form-group"><label>事件起因</label><textarea id="f-cause" rows="2" placeholder="简要描述触发摩擦的事件" required></textarea></div>
+        <div class="form-group"><label>复盘核心原则</label><textarea id="f-principles" rows="2" placeholder="如：不自我审判、不追责伴侣、区分课题…"></textarea></div>
+      </div>
+      <div class="form-section"><h4>二、事件完整时间线 + 三方行为&内心活动还原</h4><div id="timeline-container"></div><button type="button" class="btn-add-item" onclick="addTimelineStage()">+ 添加阶段</button></div>
+      <div class="form-section"><h4>三、核心专业复盘：课题分离</h4><div id="topic-sep-container"></div><button type="button" class="btn-add-item" onclick="addTopicSep()">+ 添加课题</button></div>
+      <div class="form-section"><h4>四、三方核心错误点</h4><div id="error-pts-container"></div><button type="button" class="btn-add-item" onclick="addErrorPt()">+ 添加错误分析</button></div>
+      <div class="form-section"><h4>五、当下遗留影响</h4><div id="lingering-container"></div><button type="button" class="btn-add-item" onclick="addLingering()">+ 添加影响项</button></div>
+      <div class="form-section"><h4>六、事后修复方案</h4><div id="recovery-container"></div><button type="button" class="btn-add-item" onclick="addRecovery()">+ 添加修复方案</button></div>
+      <div class="form-section"><h4>七、同款场景：下次最优应对流程</h4><div id="optimal-container"></div><button type="button" class="btn-add-item" onclick="addOptimal()">+ 添加步骤</button></div>
+      <div class="form-section"><h4>八、本次复盘终极总结</h4><div id="summary-container"></div><button type="button" class="btn-add-item" onclick="addSummary()">+ 添加总结</button></div>`;
+  } else {
+    html += `
+      <div class="form-section"><h4>💝 温馨记录信息</h4>
+        <div class="form-row"><div class="form-group"><label>日期</label><input type="text" id="f-warm-date" placeholder="如：2024年母亲节" required></div>
+        <div class="form-group"><label>标题</label><input type="text" id="f-warm-title" placeholder="如：儿子送的母亲节贺卡" required></div></div>
+        <div class="form-row"><div class="form-group"><label>温馨类型</label><select id="f-warm-type" required><option value="">请选择</option><option value="节日书信">节日书信</option><option value="礼物">礼物</option><option value="温馨日常">温馨日常</option><option value="成长瞬间">成长瞬间</option><option value="其他">其他</option></select></div>
+        <div class="form-group"><label>心情标签 <span class="optional">（逗号分隔）</span></label><input type="text" id="f-warm-tags" placeholder="如：感动、温暖、幸福"></div></div>
+        <div class="form-group"><label>涉及人员 <span class="optional">（逗号分隔）</span></label><input type="text" id="f-warm-people" placeholder="如：儿子（孩子）、母亲（收信人）"></div>
+        <div class="form-group"><label>内容描述</label><textarea id="f-warm-content" rows="4" placeholder="记录下这个温暖瞬间的细节…" required></textarea></div>
+        <div class="form-group"><label>📷 照片 <span class="optional">（可上传多张）</span></label>
+          <div class="photo-upload-area" id="photo-area">
+            <button type="button" class="photo-add-btn" onclick="document.getElementById('photo-input').click()">+</button>
+            <input type="file" id="photo-input" accept="image/*" multiple style="display:none;" onchange="handlePhotoSelect(event)">
+          </div>
+          <div class="form-hint">点击 + 选择照片，支持手机拍照或从相册选取</div>
+        </div>
+      </div>`;
+  }
+
+  html += `
+    <div class="btn-group">
+      <button type="submit" class="btn btn-primary">💾 保存记录</button>
+      <button type="button" class="btn btn-outline" onclick="goBack()">取消</button>
+    </div>`;
+
+  el.innerHTML = html;
+
+  // Add default items for conflict form
+  if (isConflict) {
+    addTimelineStage(); addTopicSep(); addErrorPt();
+  }
+}
+
+// Photo handling
+function handlePhotoSelect(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (photoFiles.length >= 10) { showToast('最多上传10张照片', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      photoFiles.push(ev.target.result);
+      renderPhotoPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function removePhoto(idx) {
+  photoFiles.splice(idx, 1);
+  uploadedPhotos.splice(idx, 1);
+  renderPhotoPreviews();
+}
+
+function renderPhotoPreviews() {
+  const area = document.getElementById('photo-area');
+  if (!area) return;
+  area.innerHTML = `
+    ${photoFiles.map((p,i) => `
+      <div class="photo-item"><img src="${p}" class="photo-preview"><button type="button" class="photo-remove" onclick="removePhoto(${i})">✕</button></div>
+    `).join('')}
+    <button type="button" class="photo-add-btn" onclick="document.getElementById('photo-input').click()">+</button>
+    <input type="file" id="photo-input" accept="image/*" multiple style="display:none;" onchange="handlePhotoSelect(event)">
+  `;
+}
+
+// Array form helpers
+function createArrayItem(label, fields) {
+  const div = document.createElement('div'); div.className = 'form-array-item';
+  div.innerHTML = `<button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>`
+    + fields.map(f => `<div class="form-group"><label>${f.label}</label>${f.type==='textarea'?`<textarea data-field="${f.key}" rows="${f.rows||2}" placeholder="${f.placeholder||''}"></textarea>`:`<input type="text" data-field="${f.key}" placeholder="${f.placeholder||''}">`}</div>`).join('');
+  return div;
+}
+function getArrayData(containerId) {
+  const items = document.getElementById(containerId)?.querySelectorAll('.form-array-item') || [];
+  return Array.from(items).map(item => {
+    const data = {};
+    item.querySelectorAll('[data-field]').forEach(input => { data[input.dataset.field] = input.value; });
+    return data;
+  });
+}
+function addTimelineStage() { conflictFormCounters.timeline++; const c = document.getElementById('timeline-container'); if (c) c.appendChild(createArrayItem(`阶段 ${conflictFormCounters.timeline}`,[{key:'title',label:'阶段名称',placeholder:'如：事件触发期（孩子违约）',type:'text'},{key:'objectiveBehavior',label:'客观行为',placeholder:'描述实际发生的客观行为',type:'textarea',rows:2},{key:'innerThoughts',label:'内心活动/深层心理',placeholder:'还原各方内心真实感受',type:'textarea',rows:2}])); }
+function addTopicSep() { conflictFormCounters.topic++; const c = document.getElementById('topic-sep-container'); if (c) c.appendChild(createArrayItem(`课题 ${conflictFormCounters.topic}`,[{key:'party',label:'课题归属',placeholder:'如：孩子的课题 / 丈夫的课题 / 你的课题',type:'text'},{key:'facts',label:'事实',placeholder:'客观陈述事实',type:'textarea',rows:2},{key:'correctHandling',label:'正确处理方式',placeholder:'描述正确做法',type:'textarea',rows:2},{key:'responsibility',label:'责任归属',placeholder:'明确责任归属',type:'text'}])); }
+function addErrorPt() { conflictFormCounters.error++; const c = document.getElementById('error-pts-container'); if (c) c.appendChild(createArrayItem(`错误分析 ${conflictFormCounters.error}`,[{key:'party',label:'责任方',placeholder:'如：孩子 / 丈夫 / 自己',type:'text'},{key:'errors',label:'错误点',placeholder:'客观中立列出具体错误点',type:'textarea',rows:3}])); }
+function addLingering() { conflictFormCounters.lingering++; const c = document.getElementById('lingering-container'); if (c) c.appendChild(createArrayItem(`影响项 ${conflictFormCounters.lingering}`,[{key:'title',label:'影响标题',placeholder:'如：系统内耗残留',type:'text'},{key:'description',label:'具体描述',placeholder:'描述具体影响',type:'textarea',rows:2}])); }
+function addRecovery() { conflictFormCounters.recovery++; const c = document.getElementById('recovery-container'); if (c) c.appendChild(createArrayItem(`修复方案 ${conflictFormCounters.recovery}`,[{key:'target',label:'修复对象',placeholder:'如：对孩子 / 对自己 / 对丈夫',type:'text'},{key:'actions',label:'行动方案',placeholder:'具体行动步骤',type:'textarea',rows:2},{key:'script',label:'参考话术（可选）',placeholder:'具体沟通话术参考',type:'textarea',rows:2}])); }
+function addOptimal() { conflictFormCounters.optimal++; const c = document.getElementById('optimal-container'); if (c) c.appendChild(createArrayItem(`步骤 ${conflictFormCounters.optimal}`,[{key:'title',label:'步骤名称',placeholder:'如：给丈夫划边界（阻断情绪）',type:'text'},{key:'action',label:'具体行动',placeholder:'描述这一步具体做什么',type:'textarea',rows:2}])); }
+function addSummary() { conflictFormCounters.summary++; const c = document.getElementById('summary-container'); if (c) c.appendChild(createArrayItem(`总结 ${conflictFormCounters.summary}`,[{key:'content',label:'总结内容',placeholder:'写下一句总结性的话',type:'textarea',rows:2}])); }
+
+// ========== Save ==========
+async function saveRecord(e) {
+  e.preventDefault();
+  const isConflict = currentType === 'conflict';
+
+  let record = {
+    id: 'rec_' + Date.now(),
+    createdAt: new Date().toISOString(),
+    recordType: currentType
+  };
+
+  if (isConflict) {
+    const peopleStr = document.getElementById('f-people').value.trim();
+    const peopleParts = peopleStr.split(/[,，、]/).filter(Boolean);
+    record.peopleInvolved = peopleParts.map(p => {
+      const m = p.trim().match(/^(.+?)[（(](.+?)[）)]$/);
+      return m ? {name:m[1].trim(),role:m[2].trim()} : {name:p.trim(),role:''};
+    });
+    record.tags = (document.getElementById('f-tags').value.trim()||'').split(/[,，、]/).map(t=>t.trim()).filter(Boolean);
+    record.eventDate = document.getElementById('f-eventDate').value.trim();
+    record.reviewer = document.getElementById('f-reviewer').value.trim();
+    record.cause = document.getElementById('f-cause').value.trim();
+    record.corePrinciples = document.getElementById('f-principles').value.trim();
+    record.conflictType = document.getElementById('f-conflictType').value;
+    record.mood = '';
+    record.timeline = getArrayData('timeline-container').map((d,i)=>({...d,stage:i+1}));
+    record.topicSeparation = getArrayData('topic-sep-container');
+    record.errorPoints = getArrayData('error-pts-container');
+    record.lingeringEffects = getArrayData('lingering-container');
+    record.recoveryPlan = getArrayData('recovery-container');
+    record.optimalFlow = getArrayData('optimal-container').map((d,i)=>({...d,step:i+1}));
+    record.finalSummary = getArrayData('summary-container').map((d,i)=>({point:i+1,content:d.content}));
+  } else {
+    record.eventDate = document.getElementById('f-warm-date').value.trim();
+    record.title = document.getElementById('f-warm-title').value.trim();
+    record.warmType = document.getElementById('f-warm-type').value;
+    record.content = document.getElementById('f-warm-content').value.trim();
+    record.tags = (document.getElementById('f-warm-tags').value.trim()||'').split(/[,，、]/).map(t=>t.trim()).filter(Boolean);
+    record.mood = document.getElementById('f-warm-tags').value.trim();
+    record.reviewer = '母亲';
+    const peopleStr = document.getElementById('f-warm-people').value.trim();
+    const peopleParts = peopleStr ? peopleStr.split(/[,，、]/).filter(Boolean) : [];
+    record.peopleInvolved = peopleParts.map(p => {
+      const m = p.trim().match(/^(.+?)[（(](.+?)[）)]$/);
+      return m ? {name:m[1].trim(),role:m[2].trim()} : {name:p.trim(),role:''};
+    });
+
+    // Handle photos: upload to server or keep as base64
+    record.photos = [];
+    if (isServerMode && photoFiles.length > 0) {
+      for (const pf of photoFiles) {
+        const url = await apiUploadImage(pf, 'photo_'+Date.now()+'.jpg');
+        if (url) record.photos.push(url);
+        else record.photos.push(pf); // fallback to base64
+      }
+    } else {
+      record.photos = [...photoFiles];
+    }
+  }
+
+  if (isServerMode) {
+    const saved = await apiSaveRecord(record);
+    if (saved) {
+      records.push(saved);
+      saveLocally();
+      showToast('✅ 保存成功！', 'success');
+      updateHomeStats();
+      openDetail(saved.id);
+      return;
+    }
+  }
+  records.push(record);
+  saveLocally();
+  showToast('✅ 保存成功！', 'success');
+  updateHomeStats();
+  openDetail(record.id);
+}
+
+// ========== Toast ==========
+function showToast(msg, type) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div'); t.className = `toast ${type}`; t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';},2200);
+  setTimeout(()=>t.remove(),2500);
+}
+
+// ========== Album Logic ==========
+const FAMILY_MEMBERS = [
+  { name: '爸爸', emoji: '👨🏻', color: '#7a9e8f' },
+  { name: '妈妈', emoji: '👩🏻', color: '#d4846a' },
+  { name: '哥哥', emoji: '👦🏻', color: '#c17a4c' },
+  { name: '弟弟', emoji: '👶🏻', color: '#e8b4b8' }
+];
+let currentAlbumPerson = '';
+let albumPhotoFiles = [];
+let albumUploadedPhotos = [];
+
+function getRecordsByPerson(person) {
+  return records.filter(r => r.recordType === 'album' && r.person === person).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+function openAlbumPeople() {
+  currentView = 'album-people'; currentType = 'album';
+  document.getElementById('btn-back').style.display = 'none';
+  showPage('page-album-people');
+  renderAlbumPeople();
+}
+
+function renderAlbumPeople() {
+  const grid = document.getElementById('person-grid');
+  grid.innerHTML = FAMILY_MEMBERS.map(m => {
+    const count = getRecordsByPerson(m.name).length;
+    return `<a class="person-card" onclick="openAlbumPerson('${m.name}')">
+      <div class="person-avatar" style="background:${m.color}18;">${m.emoji}</div>
+      <div class="person-name">${m.name}</div>
+      <div class="person-count">${count} 张照片</div>
+    </a>`;
+  }).join('');
+}
+
+function openAlbumPerson(person) {
+  currentAlbumPerson = person;
+  currentView = 'album-person'; currentType = 'album';
+  document.getElementById('btn-back').style.display = 'inline-flex';
+  document.getElementById('btn-back').onclick = () => openAlbumPeople();
+  document.getElementById('nav-brand').onclick = () => goHome();
+  showPage('page-album-person');
+  const member = FAMILY_MEMBERS.find(m => m.name === person);
+  document.getElementById('album-avatar-icon').textContent = member.emoji;
+  document.getElementById('album-avatar-icon').style.background = member.color + '22';
+  document.getElementById('album-person-name').textContent = person + '的相册';
+  renderAlbumPerson(person);
+}
+
+function renderAlbumPerson(person) {
+  const photos = getRecordsByPerson(person);
+  document.getElementById('album-photo-count').textContent = photos.length;
+  const grid = document.getElementById('photo-grid');
+  const empty = document.getElementById('album-empty-state');
+
+  if (photos.length === 0) {
+    grid.innerHTML = ''; empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = photos.map(p => `
+      <div class="photo-card" onclick="event.stopPropagation();showLightbox('${p.photo}')">
+        <img src="${p.photo}" loading="lazy">
+        ${p.caption ? `<div class="photo-caption">${escHtml(p.caption)}</div>` : ''}
+        <div class="photo-date">${p.photoDate || formatDate(p.createdAt)}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function openAlbumNew() {
+  currentView = 'album-new'; albumPhotoFiles = []; albumUploadedPhotos = [];
+  document.getElementById('btn-back').style.display = 'inline-flex';
+  document.getElementById('btn-back').onclick = () => openAlbumPerson(currentAlbumPerson);
+  document.getElementById('album-new-person-label').textContent = '添加到：' + currentAlbumPerson + '的相册';
+  showPage('page-album-new');
+  renderAlbumPhotoPreviews();
+}
+
+function handleAlbumPhotoSelect(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (albumPhotoFiles.length >= 10) { showToast('最多一次上传10张', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => { albumPhotoFiles.push({ data: ev.target.result, caption: '', photoDate: '' }); renderAlbumPhotoPreviews(); };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function renderAlbumPhotoPreviews() {
+  const area = document.getElementById('album-photo-area');
+  if (!area) return;
+  area.innerHTML = `
+    ${albumPhotoFiles.map((p,i) => `
+      <div class="photo-item"><img src="${p.data}" class="photo-preview"><button type="button" class="photo-remove" onclick="removeAlbumPhoto(${i})">✕</button></div>
+    `).join('')}
+    <button type="button" class="photo-add-btn" onclick="document.getElementById('album-photo-input').click()">+</button>
+    <input type="file" id="album-photo-input" accept="image/*" multiple style="display:none;" onchange="handleAlbumPhotoSelect(event)">
+  `;
+}
+
+function removeAlbumPhoto(idx) { albumPhotoFiles.splice(idx, 1); renderAlbumPhotoPreviews(); }
+
+async function saveAlbumPhotos() {
+  if (!albumPhotoFiles.length) { showToast('请先选择照片', 'error'); return; }
+  const caption = document.getElementById('af-caption').value.trim();
+  const photoDate = document.getElementById('af-photo-date').value.trim();
+  const tagsStr = document.getElementById('af-tags').value.trim();
+  const tags = tagsStr ? tagsStr.split(/[,，、]/).map(t=>t.trim()).filter(Boolean) : [];
+
+  for (const pf of albumPhotoFiles) {
+    let photoUrl = pf.data;
+    if (isServerMode) {
+      const url = await apiUploadImage(pf.data, 'album_'+Date.now()+'.jpg');
+      if (url) photoUrl = url;
+    }
+    const record = {
+      id: 'album_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+      createdAt: new Date().toISOString(),
+      recordType: 'album',
+      person: currentAlbumPerson,
+      photo: photoUrl,
+      caption: caption,
+      photoDate: photoDate,
+      tags: tags
+    };
+    if (isServerMode) {
+      const saved = await apiSaveRecord(record);
+      if (saved) records.push(saved);
+      else records.push(record);
+    } else {
+      records.push(record);
+    }
+    saveLocally();
+  }
+  showToast(`✅ 已添加 ${albumPhotoFiles.length} 张照片`, 'success');
+  updateHomeStats();
+  albumPhotoFiles = [];
+  openAlbumPerson(currentAlbumPerson);
+}
+
+// ========== Helpers ==========
+function escHtml(s) { if(!s) return ''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function formatDate(iso) { try { const d=new Date(iso); return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`; } catch(e) { return iso; } }
+
+// ========== Init ==========
+(async function init() {
+  await loadRecords();
+  seedIfEmpty();
+  updateHomeStats();
+  if (isServerMode) {
+    document.getElementById('brand-sub').textContent = '☁ 云端同步';
+  } else {
+    document.getElementById('brand-sub').textContent = '本地模式';
+  }
+})();
+</script>
+</body>
+</html>
