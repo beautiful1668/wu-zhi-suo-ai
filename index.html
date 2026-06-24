@@ -1229,15 +1229,26 @@ function renderAlbumPeople() {
   const grid = document.getElementById('person-grid');
   grid.innerHTML = FAMILY_MEMBERS.map(m => {
     const count = getRecordsByPerson(m.name).length;
-    return `<button class="person-card" onclick="openAlbumPerson('${m.name}')">
+    return `<button class="person-card" data-person="${m.name}">
       <div class="person-avatar" style="background:${m.color}18;">${m.emoji}</div>
       <div class="person-name">${m.name}</div>
       <div class="person-count">${count} 张照片</div>
     </button>`;
   }).join('');
+  // 使用事件委托绑定点击
+  grid.querySelectorAll('.person-card').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const person = this.getAttribute('data-person');
+      openAlbumPerson(person);
+    });
+  });
 }
 
 function openAlbumPerson(person) {
+  console.log('openAlbumPerson called:', person);
+  // 简单测试：如果页面跳转失败，至少弹窗确认点击成功
   currentAlbumPerson = person;
   currentView = 'album-person'; currentType = 'album';
   document.getElementById('btn-back').style.display = 'inline-flex';
