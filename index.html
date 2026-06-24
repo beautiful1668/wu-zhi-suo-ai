@@ -315,17 +315,19 @@ body {
 .person-card {
   background: var(--card-bg); border-radius: var(--radius); padding: 24px 20px;
   text-align: center; cursor: pointer; transition: var(--transition);
-  border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);
-  text-decoration: none; color: inherit; display: block;
+  border: 2px solid var(--border-light); box-shadow: var(--shadow-sm);
+  color: inherit; width: 100%; font-family: var(--font);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
-.person-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #a3c4b3; }
+.person-card:active, .person-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #a3c4b3; }
 .person-card .person-avatar {
   width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 2.2rem;
+  font-size: 2.2rem; pointer-events: none;
 }
-.person-card .person-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; }
-.person-card .person-count { font-size: 0.78rem; color: var(--text-muted); }
+.person-card .person-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; pointer-events: none; }
+.person-card .person-count { font-size: 0.78rem; color: var(--text-muted); pointer-events: none; }
 
 .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
 .photo-card {
@@ -1227,11 +1229,11 @@ function renderAlbumPeople() {
   const grid = document.getElementById('person-grid');
   grid.innerHTML = FAMILY_MEMBERS.map(m => {
     const count = getRecordsByPerson(m.name).length;
-    return `<a class="person-card" href="javascript:void(0)" onclick="openAlbumPerson('${m.name}')" style="cursor:pointer;">
+    return `<button class="person-card" onclick="openAlbumPerson('${m.name}')">
       <div class="person-avatar" style="background:${m.color}18;">${m.emoji}</div>
       <div class="person-name">${m.name}</div>
       <div class="person-count">${count} 张照片</div>
-    </a>`;
+    </button>`;
   }).join('');
 }
 
