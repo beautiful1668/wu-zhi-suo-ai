@@ -568,8 +568,8 @@ body {
         <h2 id="album-person-name" style="font-size:1.3rem;font-weight:700;"></h2>
         <p style="font-size:0.85rem;color:var(--text-muted);"><span id="album-photo-count"></span> 个回忆</p>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="openAlbumNew()" style="flex-shrink:0;">📷 上传</button>
     </div>
+    <button class="btn btn-primary" onclick="openAlbumNew()" style="width:100%;margin-bottom:16px;">📷 上传照片 / 视频</button>
     <div class="photo-grid" id="photo-grid"></div>
     <div class="empty-state" id="album-empty-state" style="display:none;">
       <div class="empty-icon">📷</div>
@@ -1226,7 +1226,7 @@ function renderAlbumPeople() {
   const grid = document.getElementById('person-grid');
   grid.innerHTML = FAMILY_MEMBERS.map(m => {
     const count = getRecordsByPerson(m.name).length;
-    return `<a class="person-card" onclick="openAlbumPerson('${m.name}')">
+    return `<a class="person-card" href="javascript:void(0)" onclick="openAlbumPerson('${m.name}')" style="cursor:pointer;">
       <div class="person-avatar" style="background:${m.color}18;">${m.emoji}</div>
       <div class="person-name">${m.name}</div>
       <div class="person-count">${count} 张照片</div>
