@@ -545,6 +545,14 @@ body {
         <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div class="stat-label">总记录</div></div>
         <div class="stat-item"><div class="stat-num" id="stat-days">0</div><div class="stat-label">天陪伴</div></div>
       </div>
+      <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="exportData()">📥 导出数据</button>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('import-file').click()">📤 导入数据</button>
+        <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
+      </div>
+      <div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;">
+        💡 电脑上传后点「导出」，发到微信，手机点「导入」即可同步
+      </div>
     </div>
   </div>
 
@@ -716,58 +724,61 @@ function dbClear() {
   });
 }
 
-// ========== 云端同步（jsonblob.com，免费，无需账号）==========
-var CLOUD_BLOB_ID = '019ef970-9eec-7e4d-bfa8-4e3838cb1423';
-var CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/' + CLOUD_BLOB_ID;
-var cloudEnabled = true;
-var syncInProgress = false;
+// ========== 导出导入（跨设备同步）==========
+function exportData() {
+  try {
+    var data = JSON.stringify(records, null, 2);
+    var blob = new Blob([data], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'wuzhisuoai-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('数据已导出，可发给其他设备导入', 'success');
+  } catch(e) {
+    showToast('导出失败', 'error');
+  }
+}
 
-function syncFromCloud() {
-  if (!cloudEnabled || syncInProgress) return Promise.resolve();
-  syncInProgress = true;
-  return fetch(CLOUD_URL).then(function(resp) {
-    if (!resp.ok) throw new Error('fetch failed');
-    return resp.json();
-  }).then(function(data) {
-    if (data && data.records && data.records.length > 0) {
-      // 云端数据替换本地
-      records = data.records;
-      // 同步到 IndexedDB
-      return dbClear().then(function() {
-        var ops = records.map(function(r) { return dbPut(r); });
-        return Promise.all(ops);
+function importData(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  if (!confirm('导入会合并数据（不覆盖已有记录），确定吗？')) { e.target.value = ''; return; }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var newRecords = JSON.parse(ev.target.result);
+      if (!Array.isArray(newRecords)) { showToast('文件格式不对', 'error'); e.target.value = ''; return; }
+      var existingIds = {};
+      records.forEach(function(r) { existingIds[r.id] = true; });
+      var addedCount = 0;
+      var promises = [];
+      newRecords.forEach(function(r) {
+        if (!existingIds[r.id]) {
+          records.push(r);
+          promises.push(dbPut(r));
+          addedCount++;
+        }
       });
+      Promise.all(promises).then(function() {
+        updateHomeStats();
+        showToast('导入完成，新增 ' + addedCount + ' 条记录', 'success');
+      });
+    } catch(err) {
+      showToast('文件解析失败', 'error');
     }
-  }).catch(function() {
-    // 云端不可用，使用本地数据
-  }).then(function() {
-    syncInProgress = false;
-  });
+  };
+  reader.readAsText(file);
+  e.target.value = '';
 }
 
-function syncToCloud() {
-  if (!cloudEnabled || syncInProgress) return;
-  syncInProgress = true;
-  var payload = { records: records, version: Date.now() };
-  fetch(CLOUD_URL, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).then(function(resp) {
-    if (!resp.ok) throw new Error('sync failed');
-  }).catch(function() {
-    // 静默失败，数据在本地是安全的
-  }).then(function() {
-    syncInProgress = false;
-  });
-}
-
-// 防抖：保存后延迟同步
-var syncTimer = null;
-function scheduleSync() {
-  if (syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(function() { syncToCloud(); }, 2000);
-}
+// 导出/导入不需要云同步了
+function syncFromCloud() { return Promise.resolve(); }
+function syncToCloud() {}
+function scheduleSync() {}
 
 // ========== API ==========
 function apiGetRecords(type) {
@@ -1240,7 +1251,6 @@ function confirmDelete(id) {
     if (isServerMode) await apiDeleteRecord(id);
     records = records.filter(x=>x.id!==id);
     dbDelete(id);
-    scheduleSync();
     overlay.remove();
     showToast('已删除', 'success');
     openList(currentType);
@@ -1431,7 +1441,6 @@ async function saveRecord(e) {
     if (saved) {
       records.push(saved);
       saveToDB(saved);
-      scheduleSync();
       showToast('保存成功！', 'success');
       updateHomeStats();
       openDetail(saved.id);
@@ -1440,7 +1449,6 @@ async function saveRecord(e) {
   }
   records.push(record);
   saveToDB(record);
-  scheduleSync();
   showToast('保存成功！', 'success');
   updateHomeStats();
   openDetail(record.id);
@@ -1586,7 +1594,6 @@ function deleteAlbumPhoto(id) {
   if (!confirm('确定要删除这张照片吗？')) return;
   records = records.filter(function(r) { return r.id !== id; });
   dbDelete(id);
-  scheduleSync();
   updateHomeStats();
   renderAlbumPerson(currentAlbumPerson);
   showToast('照片已删除', 'success');
@@ -1696,7 +1703,6 @@ function saveAlbumPhotos() {
     function done() {
       records.push(record);
       saveToDB(record);
-      scheduleSync();
       saveOne(idx + 1);
     }
     if (isServerMode) {
@@ -1720,20 +1726,11 @@ function formatDate(iso) { try { var d=new Date(iso); return d.getFullYear()+'�
 
 // ========== Init ==========
 (function init() {
-  // 先从云端同步，再加载本地
-  syncFromCloud().then(function() {
-    return loadRecords();
-  }).then(function() {
+  loadRecords().then(function() {
     return seedIfEmpty();
   }).then(function() {
     updateHomeStats();
-    if (cloudEnabled) {
-      document.getElementById('brand-sub').textContent = '☁ 多设备同步';
-    } else {
-      document.getElementById('brand-sub').textContent = '本地模式';
-    }
-    // 初始同步到云端
-    scheduleSync();
+    document.getElementById('brand-sub').textContent = '永久保存 · 导出同步';
   });
 })();
 </script>
