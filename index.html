@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN"><!-- v2.1 20260621 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1215,7 +1215,7 @@ function getRecordsByPerson(person) {
   return records.filter(r => r.recordType === 'album' && r.person === person).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
-function openAlbumPeople() {
+function openAlbumPeople() { console.log("打开相册列表");
   currentView = 'album-people'; currentType = 'album';
   document.getElementById('btn-back').style.display = 'none';
   showPage('page-album-people');
