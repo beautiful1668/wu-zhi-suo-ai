@@ -103,8 +103,8 @@ function seedData() {
 
 seedData();
 
-// 扩大 JSON 限制以支持 base64 图片
-app.use(express.json({ limit: '50mb' }));
+// 扩大 JSON 限制以支持 base64 图片和视频
+app.use(express.json({ limit: '200mb' }));
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(UPLOADS_DIR));
 
@@ -175,12 +175,16 @@ app.post('/api/upload', (req, res) => {
     const { data, name } = req.body;
     if (!data) return res.status(400).json({ error: '未提供图片数据' });
 
-    // 支持 base64 格式: data:image/jpeg;base64,xxxx
-    const matches = data.match(/^data:image\/(\w+);base64,(.+)$/);
+    // 支持 base64 格式: data:image/jpeg;base64,xxxx 或 data:video/mp4;base64,xxxx
     let ext = 'jpg', base64Data = data;
-    if (matches) {
-      ext = matches[1] === 'png' ? 'png' : 'jpg';
-      base64Data = matches[2];
+    const imgMatch = data.match(/^data:image\/(\w+);base64,(.+)$/);
+    const vidMatch = data.match(/^data:video\/(\w+);base64,(.+)$/);
+    if (vidMatch) {
+      ext = vidMatch[1] === 'quicktime' ? 'mov' : (vidMatch[1] || 'mp4');
+      base64Data = vidMatch[2];
+    } else if (imgMatch) {
+      ext = imgMatch[1] === 'png' ? 'png' : 'jpg';
+      base64Data = imgMatch[2];
     }
     const fileName = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6) + '.' + ext;
     const filePath = path.join(UPLOADS_DIR, fileName);
