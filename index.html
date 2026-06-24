@@ -555,8 +555,9 @@ body {
     <div class="list-header">
       <span class="list-type-badge" style="background:var(--sage-light);color:#5a8a72;">📷 时光相册</span>
       <h2>家庭相册</h2>
-      <p>选择一个人，查看他的成长足迹</p>
+      <p>选择一个人，查看或上传照片</p>
     </div>
+    <button class="btn btn-primary" onclick="pickPersonThenUpload()" style="width:100%;margin-bottom:16px;">📷 快速上传 — 选择照片</button>
     <div class="person-grid" id="person-grid"></div>
   </div>
 
@@ -1282,6 +1283,23 @@ function showVideo(src) {
   lb.innerHTML = `<video src="${src}" controls autoplay style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.3);"></video>`;
   lb.onclick = () => lb.remove();
   document.body.appendChild(lb);
+}
+
+function pickPersonThenUpload() {
+  // 弹出一个简单的选择框让用户选择要上传给谁
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `<div class="modal-box">
+    <p style="font-size:1rem;font-weight:600;margin-bottom:12px;">选择上传到谁的相册？</p>
+    ${FAMILY_MEMBERS.map(m => `
+      <button class="btn btn-primary" style="width:100%;margin-bottom:8px;background:${m.color};"
+        onclick="currentAlbumPerson='${m.name}';document.getElementById('btn-back').style.display='inline-flex';document.getElementById('btn-back').onclick=()=>openAlbumPeople();document.getElementById('album-new-person-label').textContent='添加到：${m.name}的相册';albumPhotoFiles=[];showPage('page-album-new');renderAlbumPhotoPreviews();this.closest('.modal-overlay').remove();">
+        ${m.emoji} ${m.name}
+      </button>`).join('')}
+    <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="this.closest('.modal-overlay').remove();">取消</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target===overlay) overlay.remove(); });
 }
 
 function openAlbumNew() {
