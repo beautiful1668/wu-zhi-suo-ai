@@ -467,6 +467,26 @@ body {
   .photo-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
   .photo-card img, .photo-card video { height: 120px; }
 }
+/* ========== Password Modal ========== */
+.pwd-overlay {
+  position: fixed; inset: 0; background: rgba(61,50,38,0.6);
+  display: flex; align-items: center; justify-content: center; z-index: 9999;
+}
+.pwd-box {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 30px 28px; max-width: 340px; width: 90%;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25); text-align: center;
+}
+.pwd-box h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.pwd-box p { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 16px; }
+.pwd-box input {
+  width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 1rem; font-family: var(--font); text-align: center; letter-spacing: 4px;
+  transition: var(--transition);
+}
+.pwd-box input:focus { outline: none; border-color: var(--terracotta); }
+.pwd-box .pwd-error { font-size: 0.78rem; color: #c95b5b; margin-top: 8px; }
+.pwd-box .btn-group { margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -489,7 +509,7 @@ body {
       <div class="hero-quote">「记录，是给未来的自己最好的礼物」</div>
     </div>
     <div class="home-cards">
-      <a class="home-card conflict-card" onclick="openList('conflict')">
+      <a class="home-card conflict-card" onclick="gateConflict()">
         <div class="card-icon">🧭</div>
         <div class="card-badge">成长时刻</div>
         <h2>家庭成长时刻</h2>
@@ -742,6 +762,94 @@ function seedIfEmpty() {
   saveLocally();
 }
 
+// ========== Password Gate ==========
+var DEFAULT_PWD = '520';
+var PWD_KEY = 'family_pwd_v1';
+var PWD_UNLOCK_KEY = 'family_pwd_unlocked';
+
+function getPassword() {
+  try { return localStorage.getItem(PWD_KEY) || DEFAULT_PWD; } catch(e) { return DEFAULT_PWD; }
+}
+
+function setPassword(newPwd) {
+  try { localStorage.setItem(PWD_KEY, newPwd); } catch(e) {}
+}
+
+function isUnlocked() {
+  try { return sessionStorage.getItem(PWD_UNLOCK_KEY) === '1'; } catch(e) { return false; }
+}
+
+function doUnlock() {
+  try { sessionStorage.setItem(PWD_UNLOCK_KEY, '1'); } catch(e) {}
+}
+
+function gateConflict() {
+  if (isUnlocked()) { openList('conflict'); return; }
+  showPasswordDialog(false);
+}
+
+function showPasswordDialog(isChange) {
+  var overlay = document.createElement('div');
+  overlay.className = 'pwd-overlay';
+  var title = isChange ? '修改密码' : '🔐 需要密码';
+  var hint = isChange ? '请输入旧密码，再设置新密码' : '这部分记录涉及家庭隐私，需要密码才能查看';
+  var btnText = isChange ? '修改' : '进入';
+  overlay.innerHTML = '<div class="pwd-box">' +
+    '<h3>' + title + '</h3>' +
+    '<p>' + hint + '</p>' +
+    (isChange ? '<input type="password" id="pwd-old" placeholder="旧密码" style="margin-bottom:8px;">' +
+     '<input type="password" id="pwd-new" placeholder="新密码">' :
+     '<input type="password" id="pwd-input" placeholder="请输入密码">') +
+    '<div class="pwd-error" id="pwd-error"></div>' +
+    '<div class="btn-group" style="justify-content:center;">' +
+      '<button class="btn btn-primary btn-sm" id="pwd-submit">' + btnText + '</button>' +
+      '<button class="btn btn-outline btn-sm" id="pwd-cancel">取消</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
+
+  var input = overlay.querySelector(isChange ? '#pwd-old' : '#pwd-input');
+  var errEl = overlay.querySelector('#pwd-error');
+
+  overlay.querySelector('#pwd-cancel').onclick = function(){ overlay.remove(); };
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+
+  overlay.querySelector('#pwd-submit').onclick = function(){
+    if (isChange) {
+      var oldPwd = overlay.querySelector('#pwd-old').value;
+      var newPwd = overlay.querySelector('#pwd-new').value;
+      if (oldPwd !== getPassword()) {
+        errEl.textContent = '旧密码不正确';
+        return;
+      }
+      if (!newPwd || newPwd.length < 2) {
+        errEl.textContent = '新密码至少2位';
+        return;
+      }
+      setPassword(newPwd);
+      doUnlock();
+      overlay.remove();
+      showToast('密码已修改', 'success');
+      openList('conflict');
+    } else {
+      if (input.value === getPassword()) {
+        doUnlock();
+        overlay.remove();
+        openList('conflict');
+      } else {
+        errEl.textContent = '密码不正确，请重试';
+      }
+    }
+  };
+
+  // Enter key
+  overlay.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') overlay.querySelector('#pwd-submit').click();
+  });
+
+  // Focus input
+  setTimeout(function(){ input.focus(); }, 100);
+}
+
 // ========== Navigation ==========
 function goHome() {
   currentView = 'home'; currentType = 'conflict'; currentDetailId = null;
@@ -768,8 +876,8 @@ function openList(type) {
   document.getElementById('list-type-badge').className = 'list-type-badge ' + (isConflict ? 'conflict' : 'warm');
   document.getElementById('list-type-badge').textContent = isConflict ? '🧭 成长时刻' : '💝 温暖珍藏';
   document.getElementById('list-title').textContent = isConflict ? '家庭成长时刻' : '家庭温馨时刻';
-  document.getElementById('list-desc').textContent = isConflict
-    ? '每一次复盘，都是对家庭关系的一次温柔梳理'
+  document.getElementById('list-desc').innerHTML = isConflict
+    ? '每一次复盘，都是对家庭关系的一次温柔梳理 &nbsp;<a href="javascript:void(0)" onclick="showPasswordDialog(true)" style="color:var(--terracotta);font-size:0.78rem;text-decoration:underline;">修改密码</a>'
     : '珍藏每一个被爱着的瞬间，让温暖有迹可循';
   document.getElementById('empty-icon').textContent = isConflict ? '📝' : '💌';
   document.getElementById('empty-title').textContent = isConflict ? '还没有成长记录' : '还没有温馨记录';
