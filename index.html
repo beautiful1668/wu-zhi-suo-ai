@@ -1388,21 +1388,26 @@ function renderAlbumPhotoPreviews() {
 
 function removeAlbumPhoto(idx) { albumPhotoFiles.splice(idx, 1); renderAlbumPhotoPreviews(); }
 
-async function saveAlbumPhotos() {
+function saveAlbumPhotos() {
   if (!albumPhotoFiles.length) { showToast('请先选择文件', 'error'); return; }
-  const caption = document.getElementById('af-caption').value.trim();
-  const photoDate = document.getElementById('af-photo-date').value.trim();
-  const tagsStr = document.getElementById('af-tags').value.trim();
-  const tags = tagsStr ? tagsStr.split(/[,，、]/).map(t=>t.trim()).filter(Boolean) : [];
+  var caption = document.getElementById('af-caption').value.trim();
+  var photoDate = document.getElementById('af-photo-date').value.trim();
+  var tagsStr = document.getElementById('af-tags').value.trim();
+  var tags = tagsStr ? tagsStr.split(/[,，、]/).map(function(t){return t.trim();}).filter(Boolean) : [];
+  var total = albumPhotoFiles.length;
 
-  for (const pf of albumPhotoFiles) {
-    let photoUrl = pf.data;
-    const ext = pf.mediaType === 'video' ? 'mp4' : 'jpg';
-    if (isServerMode) {
-      const url = await apiUploadImage(pf.data, 'album_'+Date.now()+'.'+ext);
-      if (url) photoUrl = url;
+  function saveOne(idx) {
+    if (idx >= albumPhotoFiles.length) {
+      showToast('已添加 ' + total + ' 个文件', 'success');
+      updateHomeStats();
+      albumPhotoFiles = [];
+      openAlbumPerson(currentAlbumPerson);
+      return;
     }
-    const record = {
+    var pf = albumPhotoFiles[idx];
+    var photoUrl = pf.data;
+    var ext = pf.mediaType === 'video' ? 'mp4' : 'jpg';
+    var record = {
       id: 'album_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
       createdAt: new Date().toISOString(),
       recordType: 'album',
@@ -1413,35 +1418,41 @@ async function saveAlbumPhotos() {
       photoDate: photoDate,
       tags: tags
     };
-    if (isServerMode) {
-      const saved = await apiSaveRecord(record);
-      if (saved) records.push(saved);
-      else records.push(record);
-    } else {
+    function done() {
       records.push(record);
+      saveLocally();
+      saveOne(idx + 1);
     }
-    saveLocally();
+    if (isServerMode) {
+      apiUploadImage(pf.data, 'album_'+Date.now()+'.'+ext).then(function(url){
+        if (url) record.photo = url;
+        return apiSaveRecord(record);
+      }).then(function(saved){
+        if (saved) record = saved;
+        done();
+      }).catch(function(){ done(); });
+    } else {
+      done();
+    }
   }
-  showToast(`✅ 已添加 ${albumPhotoFiles.length} 张照片`, 'success');
-  updateHomeStats();
-  albumPhotoFiles = [];
-  openAlbumPerson(currentAlbumPerson);
+  saveOne(0);
 }
 
 // ========== Helpers ==========
-function escHtml(s) { if(!s) return ''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
-function formatDate(iso) { try { const d=new Date(iso); return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`; } catch(e) { return iso; } }
+function escHtml(s) { if(!s) return ''; var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function formatDate(iso) { try { var d=new Date(iso); return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'; } catch(e) { return iso; } }
 
 // ========== Init ==========
-(async function init() {
-  await loadRecords();
-  seedIfEmpty();
-  updateHomeStats();
-  if (isServerMode) {
-    document.getElementById('brand-sub').textContent = '☁ 云端同步';
-  } else {
-    document.getElementById('brand-sub').textContent = '本地模式';
-  }
+(function init() {
+  loadRecords().then(function(){
+    seedIfEmpty();
+    updateHomeStats();
+    if (isServerMode) {
+      document.getElementById('brand-sub').textContent = '☁ 云端同步';
+    } else {
+      document.getElementById('brand-sub').textContent = '本地模式';
+    }
+  });
 })();
 </script>
 </body>
