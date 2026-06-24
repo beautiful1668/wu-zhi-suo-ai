@@ -1215,87 +1215,115 @@ let albumPhotoFiles = [];
 let albumUploadedPhotos = [];
 
 function getRecordsByPerson(person) {
-  return records.filter(r => r.recordType === 'album' && r.person === person).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  try { return records.filter(r => r.recordType === 'album' && r.person === person).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)); }
+  catch(e) { return []; }
 }
 
-function openAlbumPeople() { console.log("打开相册列表");
-  currentView = 'album-people'; currentType = 'album';
-  document.getElementById('btn-back').style.display = 'none';
-  showPage('page-album-people');
-  renderAlbumPeople();
+function openAlbumPeople() {
+  try {
+    currentView = 'album-people'; currentType = 'album';
+    document.getElementById('btn-back').style.display = 'none';
+    document.getElementById('btn-back').onclick = function(){};
+    showPage('page-album-people');
+    renderAlbumPeople();
+  } catch(e) { alert('相册页面出错：' + e.message); }
+}
+
+function safeSetHTML(id, html) {
+  var el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+  return el;
+}
+
+function goToPerson(person) {
+  try {
+    openAlbumPerson(person);
+  } catch(e) {
+    alert('无法打开' + person + '的相册：' + e.message);
+  }
 }
 
 function renderAlbumPeople() {
-  const grid = document.getElementById('person-grid');
-  grid.innerHTML = FAMILY_MEMBERS.map(m => {
-    const count = getRecordsByPerson(m.name).length;
-    return `<button class="person-card" data-person="${m.name}">
-      <div class="person-avatar" style="background:${m.color}18;">${m.emoji}</div>
-      <div class="person-name">${m.name}</div>
-      <div class="person-count">${count} 张照片</div>
-    </button>`;
-  }).join('');
-  // 使用事件委托绑定点击
-  grid.querySelectorAll('.person-card').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const person = this.getAttribute('data-person');
-      openAlbumPerson(person);
-    });
-  });
+  try {
+    var grid = document.getElementById('person-grid');
+    if (!grid) return;
+    var html = '';
+    for (var i = 0; i < FAMILY_MEMBERS.length; i++) {
+      var m = FAMILY_MEMBERS[i];
+      var count = getRecordsByPerson(m.name).length;
+      html += '<button class="person-card" onclick="goToPerson(\'' + m.name + '\')" style="cursor:pointer;">' +
+        '<div class="person-avatar" style="background:' + m.color + '18;">' + m.emoji + '</div>' +
+        '<div class="person-name">' + m.name + '</div>' +
+        '<div class="person-count">' + count + ' 张照片</div>' +
+        '</button>';
+    }
+    grid.innerHTML = html;
+  } catch(e) {
+    alert('渲染人物列表出错：' + e.message);
+  }
 }
 
 function openAlbumPerson(person) {
-  console.log('openAlbumPerson called:', person);
-  // 简单测试：如果页面跳转失败，至少弹窗确认点击成功
-  currentAlbumPerson = person;
-  currentView = 'album-person'; currentType = 'album';
-  document.getElementById('btn-back').style.display = 'inline-flex';
-  document.getElementById('btn-back').onclick = () => openAlbumPeople();
-  document.getElementById('nav-brand').onclick = () => goHome();
-  showPage('page-album-person');
-  const member = FAMILY_MEMBERS.find(m => m.name === person);
-  document.getElementById('album-avatar-icon').textContent = member.emoji;
-  document.getElementById('album-avatar-icon').style.background = member.color + '22';
-  document.getElementById('album-person-name').textContent = person + '的相册';
-  renderAlbumPerson(person);
+  try {
+    currentAlbumPerson = person;
+    currentView = 'album-person'; currentType = 'album';
+    document.getElementById('btn-back').style.display = 'inline-flex';
+    document.getElementById('btn-back').onclick = function(){ openAlbumPeople(); };
+    showPage('page-album-person');
+    var member = FAMILY_MEMBERS.find(function(m){ return m.name === person; });
+    if (!member) return;
+    document.getElementById('album-avatar-icon').textContent = member.emoji;
+    document.getElementById('album-avatar-icon').style.background = member.color + '22';
+    document.getElementById('album-person-name').textContent = person + '的相册';
+    renderAlbumPerson(person);
+  } catch(e) {
+    alert('打开' + person + '相册出错：' + e.message);
+  }
 }
 
 function renderAlbumPerson(person) {
-  const photos = getRecordsByPerson(person);
-  document.getElementById('album-photo-count').textContent = photos.length;
-  const grid = document.getElementById('photo-grid');
-  const empty = document.getElementById('album-empty-state');
+  try {
+    var photos = getRecordsByPerson(person);
+    document.getElementById('album-photo-count').textContent = photos.length;
+    var grid = document.getElementById('photo-grid');
+    var empty = document.getElementById('album-empty-state');
+    if (!grid || !empty) return;
 
-  if (photos.length === 0) {
-    grid.innerHTML = ''; empty.style.display = 'block';
-  } else {
-    empty.style.display = 'none';
-    grid.innerHTML = photos.map(p => {
-      const isVideo = p.mediaType === 'video' || (p.photo && p.photo.startsWith('data:video'));
-      if (isVideo) {
-        return `<div class="photo-card" onclick="event.stopPropagation();showVideo('${p.photo}')">
-          <video src="${p.photo}" muted preload="metadata" style="width:100%;height:150px;object-fit:cover;"></video>
-          <div class="video-play-icon">▶</div>
-          ${p.caption ? `<div class="photo-caption">🎬 ${escHtml(p.caption)}</div>` : ''}
-          <div class="photo-date">${p.photoDate || formatDate(p.createdAt)}</div>
-        </div>`;
+    if (photos.length === 0) {
+      grid.innerHTML = ''; empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      var h = '';
+      for (var i = 0; i < photos.length; i++) {
+        var p = photos[i];
+        var isVideo = p.mediaType === 'video' || (p.photo && p.photo.indexOf('data:video') === 0);
+        if (isVideo) {
+          h += '<div class="photo-card" onclick="event.stopPropagation();showVideo(\'' + p.photo + '\')">' +
+            '<video src="' + p.photo + '" muted preload="metadata" style="width:100%;height:150px;object-fit:cover;"></video>' +
+            '<div class="video-play-icon">▶</div>' +
+            (p.caption ? '<div class="photo-caption">🎬 ' + escHtml(p.caption) + '</div>' : '') +
+            '<div class="photo-date">' + (p.photoDate || formatDate(p.createdAt)) + '</div></div>';
+        } else {
+          h += '<div class="photo-card" onclick="event.stopPropagation();showLightbox(\'' + p.photo + '\')">' +
+            '<img src="' + p.photo + '" loading="lazy">' +
+            (p.caption ? '<div class="photo-caption">' + escHtml(p.caption) + '</div>' : '') +
+            '<div class="photo-date">' + (p.photoDate || formatDate(p.createdAt)) + '</div></div>';
+        }
       }
-      return `<div class="photo-card" onclick="event.stopPropagation();showLightbox('${p.photo}')">
-        <img src="${p.photo}" loading="lazy">
-        ${p.caption ? `<div class="photo-caption">${escHtml(p.caption)}</div>` : ''}
-        <div class="photo-date">${p.photoDate || formatDate(p.createdAt)}</div>
-      </div>`;
-    }).join('');
+      grid.innerHTML = h;
+    }
+  } catch(e) {
+    alert('渲染照片出错：' + e.message);
   }
 }
 
 function showVideo(src) {
-  const lb = document.createElement('div'); lb.className = 'lightbox';
-  lb.innerHTML = `<video src="${src}" controls autoplay style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.3);"></video>`;
-  lb.onclick = () => lb.remove();
-  document.body.appendChild(lb);
+  try {
+    var lb = document.createElement('div'); lb.className = 'lightbox';
+    lb.innerHTML = '<video src="' + src + '" controls autoplay style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.3);"></video>';
+    lb.onclick = function(){ lb.remove(); };
+    document.body.appendChild(lb);
+  } catch(e) {}
 }
 
 function pickPersonThenUpload() {
